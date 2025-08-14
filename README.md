@@ -34,6 +34,14 @@ This script can easily be run by running the following command:
 py .\PATH\TO\festival_schedular.py --input .\PATH\TO\shows.csv
 ```
 
+Optionally you can also use:
+
+``` bash
+py .\PATH\TO\festival_schedular.py --input .\PATH\TO\shows.csv --change 5
+```
+
+This will give the shows 5 hours to clear stage and the other to set everything up.
+
 The shows.csv file contains all shows with their given start and end time.
 Each row contains:
 
