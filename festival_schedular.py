@@ -41,7 +41,8 @@ def _sort_on_start_time(schedule_data: List[dict]) -> List[dict]:
     return sorted(schedule_data, key=lambda x: x['start'])
 
 
-def _stage_divider(schedule_data: List[dict]) -> List[List[dict]]:
+def _stage_divider(schedule_data: List[dict],
+                   change_set_time: int) -> List[List[dict]]:
     """Dividing the bands over different stages
        in order to give all a chance to perform
 
@@ -56,7 +57,8 @@ def _stage_divider(schedule_data: List[dict]) -> List[List[dict]]:
 
     for ii in range(1, len(schedule_data)):
         for jj in range(num_of_stages):
-            if schedule_data[ii]['start'] >= stages_schedules[jj][-1]['end']:
+            if schedule_data[ii]['start'] >= stages_schedules[jj][-1]['end'] \
+                    + change_set_time:
                 stages_schedules[jj].append(schedule_data[ii])
                 break
             else:
@@ -112,9 +114,13 @@ def main():
     parser = argparse.ArgumentParser(description="Festival Schedule Generator")
     parser.add_argument('--input', type=str, required=True,
                         help="Input CSV file with the schedule data")
+    parser.add_argument('--change', type=str, default='0',
+                        help="The time [hours] the shows get to clear"
+                        "and setup the stage")
 
     args = parser.parse_args()
     csv_file = args.input
+    change_set_time = int(args.change)
 
     if not os.path.exists(csv_file):
         print(f"Error: the file {csv_file} does not exist.")
@@ -122,7 +128,8 @@ def main():
 
     schedule_data = _get_schedule_data(csv_file)
     sorted_schedule_data = _sort_on_start_time(schedule_data)
-    stage_divided_schedule = _stage_divider(sorted_schedule_data)
+    stage_divided_schedule = _stage_divider(
+        sorted_schedule_data, change_set_time)
     _print_in_window(stage_divided_schedule)
 
     return 0
